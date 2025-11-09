@@ -1,0 +1,273 @@
+[gd_scene load_steps=28 format=3 uid="uid://b6uxx1018i8rh"]
+
+[ext_resource type="Texture2D" uid="uid://b6ujwr7v1o84u" path="res://assets/brick_blue.png" id="1_4vggb"]
+[ext_resource type="Script" uid="uid://bsjgcg02y30el" path="res://object_factory.gd" id="1_sg62n"]
+[ext_resource type="Texture2D" uid="uid://ci1raqn51xoi2" path="res://assets/brick_red.png" id="3_dko4h"]
+[ext_resource type="Script" uid="uid://bbvyhhfm83u6t" path="res://pickup.gd" id="3_s40dv"]
+[ext_resource type="Texture2D" uid="uid://hsnlt66wt7ig" path="res://assets/alpha/ComfyUI_00054_.png" id="4_sg62n"]
+[ext_resource type="Texture2D" uid="uid://bme4tw8w8mc4w" path="res://assets/clover_1.png" id="5_gqb7d"]
+[ext_resource type="Texture2D" uid="uid://co55kd2xdrp71" path="res://assets/alpha/ComfyUI_00057_.png" id="6_sg62n"]
+[ext_resource type="Texture2D" uid="uid://chp44e5iiimy3" path="res://assets/clover_3.png" id="7_s4att"]
+[ext_resource type="Texture2D" uid="uid://beevuvd224sr4" path="res://assets/commie.png" id="8_nm4id"]
+[ext_resource type="Texture2D" uid="uid://dw6etfqyss0si" path="res://assets/pony.png" id="9_vvynl"]
+[ext_resource type="Texture2D" uid="uid://cgdhpkgahbwsf" path="res://assets/pumpkin.png" id="10_8h2fg"]
+[ext_resource type="Texture2D" uid="uid://bbcks8r4qffm0" path="res://assets/queen.png" id="11_blub4"]
+[ext_resource type="Texture2D" uid="uid://bqpvj4bu8oasb" path="res://assets/vamipire_1.png" id="12_cdfop"]
+[ext_resource type="Texture2D" uid="uid://bsywjhmfs2w52" path="res://assets/vampire_2.png" id="13_58ab5"]
+[ext_resource type="Texture2D" uid="uid://cs2bxl2tidbe1" path="res://assets/vampire_3.png" id="14_jqsl2"]
+[ext_resource type="Texture2D" uid="uid://dkth3gsrjnyl" path="res://assets/water.png" id="15_yy2lc"]
+[ext_resource type="Texture2D" uid="uid://cquauk0kpf02" path="res://assets/wheel.png" id="16_xh81j"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_sg62n"]
+radius = 151.24
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kxw1a"]
+radius = 282.6
+height = 748.81
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_s4att"]
+size = Vector2(700, 350)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dko4h"]
+radius = 370.16
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_vvynl"]
+radius = 235.98
+height = 810.94
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_s40dv"]
+radius = 193.62
+height = 846.26
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gqb7d"]
+radius = 172.43
+height = 900.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sg62n"]
+radius = 190.0
+height = 740.32
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_dko4h"]
+radius = 264.23
+height = 676.76
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nm4id"]
+radius = 257.17
+height = 796.82
+
+[node name="Factory" type="Node2D"]
+script = ExtResource("1_sg62n")
+
+[node name="Pickup" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Clover1" type="Sprite2D" parent="Pickup"]
+position = Vector2(57.00003, -56.000015)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("5_gqb7d")
+offset = Vector2(0, -160)
+script = ExtResource("3_s40dv")
+points_value = 15
+
+[node name="Area2D" type="Area2D" parent="Pickup/Clover1"]
+position = Vector2(0, -160)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Pickup/Clover1/Area2D"]
+shape = SubResource("CircleShape2D_sg62n")
+
+[node name="Clover2" type="Sprite2D" parent="Pickup"]
+position = Vector2(127.00003, -56.99997)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("7_s4att")
+offset = Vector2(0, -150)
+script = ExtResource("3_s40dv")
+points_value = 5
+
+[node name="Area2D" type="Area2D" parent="Pickup/Clover2"]
+position = Vector2(0, -150)
+collision_mask = 0
+
+[node name="CollisionShapeD2" type="CollisionShape2D" parent="Pickup/Clover2/Area2D"]
+shape = SubResource("CircleShape2D_sg62n")
+
+[node name="Obstacle" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Commie" type="Sprite2D" parent="Obstacle"]
+position = Vector2(-184, -189.99998)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("8_nm4id")
+offset = Vector2(0, -381.985)
+flip_h = true
+
+[node name="Area2D2" type="Area2D" parent="Obstacle/Commie"]
+position = Vector2(0, -390.00012)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacle/Commie/Area2D2"]
+shape = SubResource("CapsuleShape2D_kxw1a")
+
+[node name="Pony" type="Sprite2D" parent="Obstacle"]
+position = Vector2(-252.00012, 48.00003)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("9_vvynl")
+offset = Vector2(0, -380)
+flip_h = true
+
+[node name="Area2D3" type="Area2D" parent="Obstacle/Pony"]
+position = Vector2(0, -380)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacle/Pony/Area2D3"]
+rotation = 0.61086524
+shape = SubResource("RectangleShape2D_s4att")
+
+[node name="Pumpkin" type="Sprite2D" parent="Obstacle"]
+position = Vector2(-153.00006, 43.00003)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("10_8h2fg")
+offset = Vector2(0, -380)
+
+[node name="Area2D4" type="Area2D" parent="Obstacle/Pumpkin"]
+position = Vector2(0, -340)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacle/Pumpkin/Area2D4"]
+shape = SubResource("CircleShape2D_dko4h")
+
+[node name="Vamipire1" type="Sprite2D" parent="Obstacle"]
+position = Vector2(-116, -325.00003)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("12_cdfop")
+offset = Vector2(0, -380)
+
+[node name="Area2D6" type="Area2D" parent="Obstacle/Vamipire1"]
+position = Vector2(0, -380)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacle/Vamipire1/Area2D6"]
+shape = SubResource("CapsuleShape2D_vvynl")
+
+[node name="Vampire2" type="Sprite2D" parent="Obstacle"]
+position = Vector2(-250, -322)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("13_58ab5")
+offset = Vector2(0, -380)
+
+[node name="Area2D7" type="Area2D" parent="Obstacle/Vampire2"]
+position = Vector2(0, -380)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacle/Vampire2/Area2D7"]
+shape = SubResource("CapsuleShape2D_s40dv")
+
+[node name="Vampire3" type="Sprite2D" parent="Obstacle"]
+position = Vector2(-178.00024, -329)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("14_jqsl2")
+offset = Vector2(0, -440)
+
+[node name="Area2D8" type="Area2D" parent="Obstacle/Vampire3"]
+position = Vector2(0, -440)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacle/Vampire3/Area2D8"]
+shape = SubResource("CapsuleShape2D_gqb7d")
+
+[node name="Water" type="Sprite2D" parent="Obstacle"]
+position = Vector2(-224.00012, -48.99997)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("15_yy2lc")
+offset = Vector2(0, -380)
+
+[node name="Area2D9" type="Area2D" parent="Obstacle/Water"]
+position = Vector2(0, -380)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacle/Water/Area2D9"]
+shape = SubResource("CapsuleShape2D_sg62n")
+
+[node name="Wheel" type="Sprite2D" parent="Obstacle"]
+position = Vector2(-130.00006, -56.00003)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("16_xh81j")
+offset = Vector2(0, -360)
+
+[node name="Area2D10" type="Area2D" parent="Obstacle/Wheel"]
+position = Vector2(0, -360)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacle/Wheel/Area2D10"]
+shape = SubResource("CapsuleShape2D_dko4h")
+
+[node name="BrickBlue" type="Sprite2D" parent="Obstacle"]
+position = Vector2(-262.39975, 141.40005)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_4vggb")
+offset = Vector2(0, -338)
+
+[node name="Area2D" type="Area2D" parent="Obstacle/BrickBlue"]
+collision_mask = 0
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Obstacle/BrickBlue/Area2D"]
+polygon = PackedVector2Array(-106.00244, -644.0004, 383.99756, -414.0005, 383.99756, -174.00049, 83.99756, -24.000488, -376.00244, -254.00049, -376.00244, -494.00043)
+
+[node name="BrickGreen" type="Sprite2D" parent="Obstacle"]
+position = Vector2(-269, 209)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("4_sg62n")
+offset = Vector2(0, -190)
+
+[node name="Area2D" type="Area2D" parent="Obstacle/BrickGreen"]
+position = Vector2(0, -168)
+collision_mask = 0
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Obstacle/BrickGreen/Area2D"]
+polygon = PackedVector2Array(-10, -181.99988, 220, -71.99988, 220, 68, 20, 178, -200, 58, -200, -71.99988)
+
+[node name="BrickRed" type="Sprite2D" parent="Obstacle"]
+position = Vector2(-157, 138)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_dko4h")
+offset = Vector2(0, -338)
+
+[node name="Area2D" type="Area2D" parent="Obstacle/BrickRed"]
+position = Vector2(0, -338)
+collision_mask = 0
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Obstacle/BrickRed/Area2D"]
+position = Vector2(0, 338)
+scale = Vector2(0.9999998, 0.9999998)
+polygon = PackedVector2Array(-106.00244, -644.0004, 383.99756, -414.0005, 383.99756, -174.00049, 83.99756, -24.000488, -376.00244, -254.00049, -376.00244, -494.00043)
+
+[node name="BrickYellow" type="Sprite2D" parent="Obstacle"]
+position = Vector2(-156.00002, 211)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("6_sg62n")
+offset = Vector2(0, -190)
+
+[node name="Area2D" type="Area2D" parent="Obstacle/BrickYellow"]
+position = Vector2(0, -185.00006)
+collision_mask = 0
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Obstacle/BrickYellow/Area2D"]
+scale = Vector2(0.99999994, 0.99999994)
+polygon = PackedVector2Array(-9.999878, -165.00012, 200.00012, -45.000122, 200.00012, 75, 20, 178, -200, 58, -199.99988, -55.000122)
+
+[node name="FlyingObstacle" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Queen" type="Sprite2D" parent="FlyingObstacle"]
+position = Vector2(-314.00012, -197.00012)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("11_blub4")
+offset = Vector2(0, -300)
+
+[node name="Area2D5" type="Area2D" parent="FlyingObstacle/Queen"]
+position = Vector2(0, -300)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FlyingObstacle/Queen/Area2D5"]
+rotation = 2.0141098
+shape = SubResource("CapsuleShape2D_nm4id")

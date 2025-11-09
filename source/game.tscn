@@ -1,0 +1,242 @@
+[gd_scene load_steps=15 format=3 uid="uid://dmhgtot6n3bth"]
+
+[ext_resource type="Script" uid="uid://vs75y7r0j47i" path="res://game.gd" id="1_80nbo"]
+[ext_resource type="Texture2D" uid="uid://8l08sq07lvns" path="res://assets/background1.png" id="2_e2o6t"]
+[ext_resource type="Texture2D" uid="uid://bjuofbrvaoxsv" path="res://assets/background2.png" id="3_j5wjh"]
+[ext_resource type="Texture2D" uid="uid://b7wxph4a6fyvo" path="res://assets/background3.png" id="4_vef74"]
+[ext_resource type="PackedScene" uid="uid://y45sh176q84i" path="res://boss.tscn" id="5_vef74"]
+[ext_resource type="Texture2D" uid="uid://dw6etfqyss0si" path="res://assets/pony.png" id="6_mfdv2"]
+[ext_resource type="Texture2D" uid="uid://bqpvj4bu8oasb" path="res://assets/vamipire_1.png" id="7_iotsf"]
+[ext_resource type="Texture2D" uid="uid://bsywjhmfs2w52" path="res://assets/vampire_2.png" id="8_lc2xo"]
+[ext_resource type="PackedScene" uid="uid://b6uxx1018i8rh" path="res://object_factory.tscn" id="9_vef74"]
+[ext_resource type="PackedScene" uid="uid://dor1kr1opwutd" path="res://rain.tscn" id="10_hve3p"]
+[ext_resource type="LabelSettings" uid="uid://fwi472gvxq7p" path="res://LabelFont.tres" id="11_mfdv2"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mfdv2"]
+radius = 193.06
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_iotsf"]
+radius = 193.06
+height = 529.14
+
+[sub_resource type="LabelSettings" id="LabelSettings_mfdv2"]
+font_size = 48
+font_color = Color(1, 0, 0, 1)
+outline_size = 10
+outline_color = Color(0, 0, 0, 1)
+
+[node name="Game" type="Node2D"]
+texture_filter = 1
+script = ExtResource("1_80nbo")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(500, 300)
+
+[node name="Parallax2D1" type="Parallax2D" parent="."]
+unique_name_in_owner = true
+scroll_scale = Vector2(0.3, 0.3)
+scroll_offset = Vector2(0, -28.94)
+repeat_size = Vector2(512, 0)
+autoscroll = Vector2(-60, 0)
+repeat_times = 3
+
+[node name="Background1" type="Sprite2D" parent="Parallax2D1"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_e2o6t")
+centered = false
+
+[node name="Parallax2D2" type="Parallax2D" parent="."]
+unique_name_in_owner = true
+scroll_scale = Vector2(0.6, 0.6)
+scroll_offset = Vector2(0, -46)
+repeat_size = Vector2(512, 0)
+autoscroll = Vector2(-120, 0)
+repeat_times = 3
+
+[node name="Background2" type="Sprite2D" parent="Parallax2D2"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_j5wjh")
+centered = false
+
+[node name="Parallax2D3" type="Parallax2D" parent="."]
+unique_name_in_owner = true
+scroll_offset = Vector2(0, 90)
+repeat_size = Vector2(512, 0)
+autoscroll = Vector2(-200, 0)
+repeat_times = 3
+
+[node name="Background3" type="Sprite2D" parent="Parallax2D3"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_vef74")
+centered = false
+region_rect = Rect2(0, 0, 1024, 1024)
+
+[node name="Boss" parent="." instance=ExtResource("5_vef74")]
+unique_name_in_owner = true
+position = Vector2(911, 483.00003)
+offset = Vector2(0, -404.5)
+flip_h = true
+
+[node name="Factory" parent="." instance=ExtResource("9_vef74")]
+position = Vector2(210, 2655)
+
+[node name="Player" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(171, 479)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("6_mfdv2")
+offset = Vector2(0, -401.5)
+
+[node name="Area2D" type="Area2D" parent="Player"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Area2D"]
+position = Vector2(209.99997, -579.99994)
+shape = SubResource("CircleShape2D_mfdv2")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Player/Area2D"]
+position = Vector2(-50, -229.99997)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_iotsf")
+
+[node name="Sidekicks" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Vamipire1" type="Sprite2D" parent="Sidekicks"]
+position = Vector2(76.549995, 486.69998)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("7_iotsf")
+offset = Vector2(0, -417.5)
+flip_h = true
+
+[node name="Vampire2" type="Sprite2D" parent="Sidekicks"]
+position = Vector2(76.549995, 486.69998)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("8_lc2xo")
+offset = Vector2(0, -438.5)
+flip_h = true
+
+[node name="Obstacles" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Rain" parent="." node_paths=PackedStringArray("player", "boss", "obstacles") instance=ExtResource("10_hve3p")]
+player = NodePath("../Player")
+boss = NodePath("../Boss")
+obstacles = NodePath("../Obstacles")
+
+[node name="RainTimer" type="Timer" parent="Rain"]
+unique_name_in_owner = true
+wait_time = 0.1
+
+[node name="SpawnTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 2.0
+
+[node name="PickupTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 4.0
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+
+[node name="ScoreLabel" type="Label" parent="UILayer"]
+unique_name_in_owner = true
+offset_left = 770.0
+offset_top = 16.0
+offset_right = 839.0
+offset_bottom = 39.0
+size_flags_horizontal = 8
+text = "SCORE: 0"
+label_settings = ExtResource("11_mfdv2")
+
+[node name="StartLabel" type="Label" parent="UILayer"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+text = "CLICK OR SPACE TO START"
+label_settings = ExtResource("11_mfdv2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Overlay" type="Control" parent="UILayer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="UILayer/Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7)
+
+[node name="GameOverLabel" type="Label" parent="UILayer/Overlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -104.0
+offset_bottom = -104.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+text = "GAME OVER"
+label_settings = SubResource("LabelSettings_mfdv2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FinalScoreLabel" type="Label" parent="UILayer/Overlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -106.0
+offset_top = -16.5
+offset_right = 106.0
+offset_bottom = 16.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 8
+text = "FINAL SCORE: 0"
+label_settings = ExtResource("11_mfdv2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="UILayer/Overlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -65.5
+offset_top = 43.5
+offset_right = 65.5
+offset_bottom = 84.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.8745098, 0.8745098, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0.9490196, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "RESTART"
+
+[connection signal="area_entered" from="Player/Area2D" to="." method="_on_player_collider_area_entered"]
+[connection signal="timeout" from="Rain/RainTimer" to="Rain" method="_on_rain_timer_timeout"]
+[connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]
+[connection signal="timeout" from="PickupTimer" to="." method="_on_pickup_timer_timeout"]
+[connection signal="pressed" from="UILayer/Overlay/Button" to="." method="_on_restart_pressed"]
