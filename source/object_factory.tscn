@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://b6uxx1018i8rh"]
+[gd_scene load_steps=33 format=3 uid="uid://b6uxx1018i8rh"]
 
 [ext_resource type="Texture2D" uid="uid://b6ujwr7v1o84u" path="res://assets/brick_blue.png" id="1_4vggb"]
 [ext_resource type="Script" uid="uid://bsjgcg02y30el" path="res://object_factory.gd" id="1_sg62n"]
@@ -17,6 +17,10 @@
 [ext_resource type="Texture2D" uid="uid://cs2bxl2tidbe1" path="res://assets/vampire_3.png" id="14_jqsl2"]
 [ext_resource type="Texture2D" uid="uid://dkth3gsrjnyl" path="res://assets/water.png" id="15_yy2lc"]
 [ext_resource type="Texture2D" uid="uid://cquauk0kpf02" path="res://assets/wheel.png" id="16_xh81j"]
+[ext_resource type="LabelSettings" uid="uid://fwi472gvxq7p" path="res://LabelFont.tres" id="18_dko4h"]
+[ext_resource type="Script" uid="uid://c8rdxwojfsj8q" path="res://score_points.gd" id="19_s40dv"]
+[ext_resource type="Texture2D" uid="uid://dym1nf1mw1vco" path="res://assets/Misc/6x35_dash.png" id="20_gqb7d"]
+[ext_resource type="Script" uid="uid://v5csbjrlcn1w" path="res://rain_drop.gd" id="21_kxw1a"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_sg62n"]
 radius = 151.24
@@ -54,6 +58,9 @@ height = 676.76
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nm4id"]
 radius = 257.17
 height = 796.82
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_gqb7d"]
+radius = 2.0
 
 [node name="Factory" type="Node2D"]
 script = ExtResource("1_sg62n")
@@ -271,3 +278,42 @@ collision_mask = 0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FlyingObstacle/Queen/Area2D5"]
 rotation = 2.0141098
 shape = SubResource("CapsuleShape2D_nm4id")
+
+[node name="ScorePoints" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -66.0
+offset_top = 25.0
+offset_right = -20.0
+offset_bottom = 58.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "+10"
+label_settings = ExtResource("18_dko4h")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("19_s40dv")
+
+[node name="Timer" type="Timer" parent="ScorePoints"]
+wait_time = 0.5
+
+[node name="RainDrop" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.5254902)
+position = Vector2(41, 42)
+texture = ExtResource("20_gqb7d")
+offset = Vector2(-14, 0)
+script = ExtResource("21_kxw1a")
+
+[node name="Area2D" type="Area2D" parent="RainDrop"]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RainDrop/Area2D"]
+shape = SubResource("CircleShape2D_gqb7d")
+
+[connection signal="timeout" from="ScorePoints/Timer" to="ScorePoints" method="_on_timer_timeout"]
+[connection signal="area_entered" from="RainDrop/Area2D" to="RainDrop" method="_on_area_entered"]

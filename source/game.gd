@@ -20,6 +20,7 @@ var sidekicks := [] # each: { sprite: Sprite2D, delay:int, is_ducking:bool, is_j
 var action_queue := [] # each: { type:String, time_ms:int, processed_by:Array }
 
 
+var anim_speed := 0.0
 
 
 @onready var camera_2d = %Camera2D
@@ -36,9 +37,9 @@ var action_queue := [] # each: { type:String, time_ms:int, processed_by:Array }
 @onready var score_label = %ScoreLabel
 @onready var start_label = %StartLabel
 @onready var factory = $Factory
-@onready var rain_timer = %RainTimer
 @onready var sidekicks_container = %Sidekicks
 @onready var pickup_timer = %PickupTimer
+@onready var rain = %Rain
 
 
 func _ready() -> void:
@@ -48,8 +49,6 @@ func _ready() -> void:
 	player.position = Vector2(Globals.PLAYER_INITIAL_X, Globals.GROUND_Y)
 
 	# Sidekicks
-	#var sidekick_tex_paths := ["res://assets/commie.png", "res://assets/clover.png", "res://assets/pumpkin.png"]
-	#var sidekick_duck_tex_paths := ["res://assets/commie.png", "res://assets/clover.png", "res://assets/pumpkin.png"]
 	var sidekick_offsets := [-60.0, -90.0]
 	var sidekick_delays := [150, 300]
 	var i := 0
@@ -62,15 +61,10 @@ func _ready() -> void:
 			"is_jumping": false,
 			"jump_vel": 0.0,
 			"x_offset": sidekick_offsets[i],
-			#"duck_paths": [sidekick_duck_tex_paths[min(i, sidekick_duck_tex_paths.size()-1)],
-							#sidekick_duck_tex_paths[min(i, sidekick_duck_tex_paths.size()-1)].replace(".png", ".jpg")] 
 		})
 		i += 1
 
-	# Boss
 	boss.position = Vector2(Globals.BOSS_INITIAL_X, Globals.GROUND_Y)
-
-	#set_process_unhandled_input(true)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept") or (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
@@ -87,13 +81,12 @@ func _on_start_pressed() -> void:
 		started = true
 		start_label.queue_free()
 		spawn_timer.start()
-		rain_timer.start()
 		pickup_timer.start()
 
 func _jump() -> void:
 	if is_game_over or player_ducking:
 		return
-	player.scale.y = 0.1
+	player.scale.y = 1.0
 	if abs(player.position.y - Globals.GROUND_Y) < 0.5:
 		player_vel_y = Globals.PLAYER_JUMP_VELOCITY
 		action_queue.append({"type":"jump", "time_ms": Time.get_ticks_msec(), "processed_by": []})
@@ -105,7 +98,7 @@ func _duck() -> void:
 		return
 	if abs(player.position.y - Globals.GROUND_Y) < 0.5:
 		player_ducking = true
-		player.scale.y = 0.04
+		player.scale.y = 0.4
 		action_queue.append({"type":"duck", "time_ms": Time.get_ticks_msec(), "processed_by": []})
 
 func _stand_up() -> void:
@@ -113,21 +106,26 @@ func _stand_up() -> void:
 		return
 	if not player_ducking:
 		return
-	player.scale.y = 0.1
+	player.scale.y = 1.0
 	player_ducking = false
 	action_queue.append({"type":"standup", "time_ms": Time.get_ticks_msec(), "processed_by": []})
+
+func _physics_process(delta):
+	rain.create_rain_drop()
+
 
 func _process(delta: float) -> void:
 	if is_game_over or not started:
 		queue_redraw() # for rain buildup when paused
 		return
-
-	Globals.game_speed = Globals.INITIAL_GAME_SPEED + (score * Globals.GAME_SPEED_INCREMENT)
+		
+	Globals.game_speed = lerp(Globals.game_speed, Globals.INITIAL_GAME_SPEED + (score * Globals.GAME_SPEED_INCREMENT), 0.5)
 	# Parallax scroll speeds
 	parallax_1.autoscroll.x = Globals.game_speed * -60.0
 	parallax_2.autoscroll.x = Globals.game_speed * -120.0
 	parallax_3.autoscroll.x = Globals.game_speed * -200.0
 
+	
 	# Scoring & speed
 	score += delta * 10.0
 	
@@ -142,7 +140,7 @@ func _process(delta: float) -> void:
 	# Move player toward target X
 	var progress_ratio: float = clamp(score * Globals.PLAYER_MOVEMENT_SPEED, 0.0, 1.0)
 	player.position.x = lerp(Globals.PLAYER_INITIAL_X, Globals.PLAYER_TARGET_X, progress_ratio)
-
+	%PlayerSprite.position.y = -abs(sin(Globals.game_speed*200.0)) * 5.0
 	# Apply jump physics
 	player_vel_y += Globals.GRAVITY * delta
 	player.position.y += player_vel_y * delta
@@ -154,7 +152,7 @@ func _process(delta: float) -> void:
 	## Update sidekicks positions and actions
 	for i in 2:
 		var sk = sidekicks[i]
-		var spr: Sprite2D = sidekicks_container.get_child(i)
+		var spr: Node2D = sidekicks_container.get_child(i)
 		spr.position.x = player.position.x + float(sk.x_offset)
 		# Jump physics for sidekicks
 		if sk.is_jumping:
@@ -164,6 +162,8 @@ func _process(delta: float) -> void:
 				spr.position.y = Globals.GROUND_Y
 				sk.is_jumping = false
 				sk.jump_vel = 0.0
+		else:
+			spr.get_child(0).position.y = -abs(sin(Globals.game_speed*200.0+sk.x_offset)) * 5.0
 		# Process action queue with delay
 		for a in action_queue:
 			if not a.has("processed_by"):
@@ -176,17 +176,15 @@ func _process(delta: float) -> void:
 						if not sk.is_jumping:
 							sk.is_jumping = true
 							sk.jump_vel = Globals.PLAYER_JUMP_VELOCITY
-							spr.scale.y = 0.1
+							spr.scale.y = 1.0
 					"duck":
 						if not sk.is_ducking:
 							sk.is_ducking = true
-							# attempt change texture
-							spr.scale.y = 0.04
+							spr.scale.y = 0.4
 					"standup":
 						if sk.is_ducking:
 							sk.is_ducking = false
-							spr.scale.y = 0.1
-							# revert to original if available (no stored original, so no-op)
+							spr.scale.y = 1.0
 
 	# Clean old actions
 	var new_q := []
@@ -205,10 +203,6 @@ func _process(delta: float) -> void:
 		if (obstacle.global_position.x + 64.0) < 0.0:
 			obstacle.queue_free()
 			continue
-		#var hb: Rect2 = _get_sprite_rect(obstacle)
-		#if _rects_intersect(hb, _get_sprite_rect(player)):
-			#_on_game_over()
-			#break
 
 
 func _get_sprite_rect(s: Sprite2D) -> Rect2:
@@ -235,7 +229,10 @@ func spawn_flying_obstacle() -> void:
 
 func spawn_pickup() -> void:
 	var obstacle = factory.get_pickup()
-	obstacle.position = Vector2(boss.position.x - 80.0, Globals.GROUND_Y)
+	if randi()%2:
+		obstacle.position = Vector2(boss.position.x - 80.0, Globals.GROUND_Y)
+	else:
+		obstacle.position = Vector2(boss.position.x - 80.0, Globals.GROUND_Y - 75.0)
 	obstacle_container.add_child(obstacle)
 
 func _on_game_over() -> void:
@@ -244,7 +241,6 @@ func _on_game_over() -> void:
 	is_game_over = true
 	spawn_timer.stop()
 	pickup_timer.stop()
-	rain_timer.stop()
 	player_ducking = false
 	# simple feedback: tint player red
 	player.modulate = Color(1,0.4,0.4)
@@ -284,6 +280,10 @@ func _on_pickup_timer_timeout():
 func _on_player_collider_area_entered(area):
 	if "points_value" in area.get_parent():
 		score += area.get_parent().points_value
+		var score_float = factory.get_score_points(area.get_parent().points_value)
+		score_float.position = area.global_position
+		add_child(score_float)
+		score_float.start()
 		area.get_parent().queue_free()
 	else:
 		_on_game_over()

@@ -26,3 +26,5 @@ const INITIAL_GAME_SPEED: float = 2.0
 const GAME_SPEED_INCREMENT: float = 0.005
 
 var game_speed: float = Globals.INITIAL_GAME_SPEED
+
+var factory:Node

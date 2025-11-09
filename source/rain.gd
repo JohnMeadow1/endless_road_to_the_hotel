@@ -10,27 +10,12 @@ extends Node2D
 @export var boss:Node2D
 @export var obstacles:Node2D
 
-var rain_particles := [] # each: { x:float,y:float,speed:float,wind:float,length:float,alpha:float }
 var splash_particles := [] # each: { x:float,y:float,vx:float,vy:float,life:float,max_life:float,size:float }
-var max_rain := 50
-var max_splash := 50
-@onready var rain_timer = %RainTimer
+var max_splash := 500
 
 func _process(delta):
-	# Update rain
-	var keep := []
-	for rain_drop in rain_particles:
-		rain_drop.y += rain_drop.speed * delta
-		rain_drop.x -= rain_drop.wind * delta
-		if _rain_collides(rain_drop.x, rain_drop.y):
-			continue
-		if rain_drop.y > Globals.GROUND_Y:
-			continue
-		keep.append(rain_drop)
-	rain_particles = keep.duplicate()
-
 	# Update splashes
-	keep.clear()
+	var keep := []
 	for splash in splash_particles:
 		splash.x += splash.vx * delta
 		splash.y += splash.vy * delta
@@ -43,47 +28,31 @@ func _process(delta):
 
 	queue_redraw()
 
-func _rain_collides(x: float, y: float) -> bool:
-	# ground
-	if y >= Globals.GROUND_Y - 5.0:
-		_make_splash(x, Globals.GROUND_Y)
-		return true
-	# player
-	if _get_sprite_rect(player).has_point(Vector2(x,y)):
-		_make_splash(x, y)
-		return true
-	# sidekicks
-	#for sk in sidekicks:
-		#if _get_sprite_rect(sk.sprite).has_point(Vector2(x,y)):
-			#_make_splash(x,y)
-			#return true
-	# boss
-	if _get_sprite_rect(boss).has_point(Vector2(x,y)):
-		_make_splash(x,y)
-		return true
-	# obstacles
-	for obstacle in obstacles.get_children():
-		if _get_sprite_rect(obstacle).has_point(Vector2(x,y)):
-			_make_splash(x,y)
-			return true
-	return false
 
-func _make_splash(x: float, y: float) -> void:
-	if splash_particles.size() >= max_splash:
-		return
+func make_splash(in_position:Vector2, extre_x:float = 0.0) -> void:
+	var color = Color(1.0,1.0,1.0,0.5)
+	for i in randi_range(2,6):
+		#var angle_deg := randf_range(-2.10, 1.05)
+		var angle_deg := randf_range(-2.10, 0.05)
+		var speed := randf_range(230.0, 280.0) 
+		%Particles2D.emit_particle(Transform2D(0.0, in_position), Vector2.from_angle(angle_deg) * speed + Vector2(extre_x, 0), color, color, 15)
 		
-	for i in randi_range(2,3):
-		var angle_deg := randf_range(-30.0, 30.0) - 90.0
-		var speed := randf_range(30.0, 80.0)
-		var angle := deg_to_rad(angle_deg)
-		splash_particles.append({
-			"x":x, "y":y,
-			"vx": cos(angle) * speed,
-			"vy": sin(angle) * speed,
-			"life": 200.0,
-			"max_life": 200.0,
-			"size": randf_range(1.0, 2.0)
-		})
+#func make_splash(x: float, y: float, extre_x:float = 0.0) -> void:
+	#if splash_particles.size() >= max_splash:
+		#return
+		#
+	#for i in randi_range(2,3):
+		#var angle_deg := randf_range(-30.0, 30.0) - 90.0
+		#var speed := randf_range(130.0, 180.0)
+		#var angle := deg_to_rad(angle_deg)
+		#splash_particles.append({
+			#"x":x, "y":y,
+			#"vx": cos(angle) * speed + extre_x,
+			#"vy": sin(angle) * speed,
+			#"life": 200.0,
+			#"max_life": 200.0,
+			#"size": randf_range(2.0, 4.0)
+		#})
 
 func _get_sprite_rect(s: Sprite2D) -> Rect2:
 	var tex := s.texture
@@ -96,27 +65,14 @@ func _get_sprite_rect(s: Sprite2D) -> Rect2:
 func _rects_intersect(a: Rect2, b: Rect2) -> bool:
 	return a.intersects(b)
 
-func _on_rain_timer_timeout():
-	if rain_particles.size() >= max_rain:
-		return
-	var x := randf_range(0.0, Globals.GAME_WIDTH + 400.0)
-	var y := -10.0
-	var speed := randf_range(500.0, 700.0)
-	var wind := 500.0 + (Globals.game_speed - Globals.INITIAL_GAME_SPEED) * 200.0
-	var speed_mult := (Globals.game_speed - Globals.INITIAL_GAME_SPEED) / Globals.INITIAL_GAME_SPEED
-	var len_min := 10.0 + (speed_mult * 30.0)
-	var len_max := 25.0 + (speed_mult * 50.0)
-	var length := randf_range(len_min, len_max)
-	var alpha := randf_range(0.5, 0.8)
-	rain_particles.append({"x":x, "y":y, "speed":speed, "wind":wind, "length":length, "alpha":alpha})
-
+func create_rain_drop():
+	var new_drop = Globals.factory.get_rain_drop()
+	new_drop.position = Vector2(randf_range(0.0, Globals.GAME_WIDTH + 400.0), -10)
+	new_drop.velocity = Vector2(-randf_range(500.0, 700.0), 500.0 + (Globals.game_speed - Globals.INITIAL_GAME_SPEED) * 200.0)
+	add_child(new_drop)
+	new_drop.start()
 
 func _draw() -> void:
-	# Draw rain as lines
-	for rain_drop in rain_particles:
-		var angle_offset: float = (rain_drop.wind / rain_drop.speed) * rain_drop.length
-		draw_line(Vector2(rain_drop.x, rain_drop.y), Vector2(rain_drop.x + angle_offset, rain_drop.y - rain_drop.length), Color(0.53, 0.8, 1.0, rain_drop.alpha), 2.0)
-		
 	# Draw splashes
 	for splash in splash_particles:
 		var alpha: float = splash.life / splash.max_life

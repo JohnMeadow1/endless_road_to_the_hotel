@@ -1,23 +1,76 @@
-[gd_scene load_steps=15 format=3 uid="uid://dmhgtot6n3bth"]
+[gd_scene load_steps=26 format=3 uid="uid://dmhgtot6n3bth"]
 
 [ext_resource type="Script" uid="uid://vs75y7r0j47i" path="res://game.gd" id="1_80nbo"]
 [ext_resource type="Texture2D" uid="uid://8l08sq07lvns" path="res://assets/background1.png" id="2_e2o6t"]
 [ext_resource type="Texture2D" uid="uid://bjuofbrvaoxsv" path="res://assets/background2.png" id="3_j5wjh"]
 [ext_resource type="Texture2D" uid="uid://b7wxph4a6fyvo" path="res://assets/background3.png" id="4_vef74"]
 [ext_resource type="PackedScene" uid="uid://y45sh176q84i" path="res://boss.tscn" id="5_vef74"]
+[ext_resource type="Texture2D" uid="uid://71dyedwppxdy" path="res://assets/baky.png" id="6_iotsf"]
 [ext_resource type="Texture2D" uid="uid://dw6etfqyss0si" path="res://assets/pony.png" id="6_mfdv2"]
 [ext_resource type="Texture2D" uid="uid://bqpvj4bu8oasb" path="res://assets/vamipire_1.png" id="7_iotsf"]
 [ext_resource type="Texture2D" uid="uid://bsywjhmfs2w52" path="res://assets/vampire_2.png" id="8_lc2xo"]
 [ext_resource type="PackedScene" uid="uid://b6uxx1018i8rh" path="res://object_factory.tscn" id="9_vef74"]
 [ext_resource type="PackedScene" uid="uid://dor1kr1opwutd" path="res://rain.tscn" id="10_hve3p"]
+[ext_resource type="Texture2D" uid="uid://chp44e5iiimy3" path="res://assets/clover_3.png" id="11_215e1"]
 [ext_resource type="LabelSettings" uid="uid://fwi472gvxq7p" path="res://LabelFont.tres" id="11_mfdv2"]
+[ext_resource type="Script" uid="uid://bbvyhhfm83u6t" path="res://pickup.gd" id="12_7sc4i"]
+[ext_resource type="Texture2D" uid="uid://chnxomoi32br7" path="res://assets/Misc/6x35_dash_flipped.png" id="14_7sc4i"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_215e1"]
+radius = 167.5
+height = 916.9
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7sc4i"]
+radius = 95.81
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_mfdv2"]
-radius = 193.06
+radius = 19.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_iotsf"]
-radius = 193.06
-height = 529.14
+radius = 19.0
+height = 52.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_80cx4"]
+radius = 151.24
+
+[sub_resource type="Curve" id="Curve_80cx4"]
+_data = [Vector2(0, 1), 0.0, -1.0, 0, 1, Vector2(1, 0), -1.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_rvswv"]
+texture_mode = 1
+curve = SubResource("Curve_80cx4")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_80cx4"]
+lifetime_randomness = 0.8
+particle_flag_align_y = true
+particle_flag_disable_z = true
+direction = Vector3(-1, -1, 0)
+initial_velocity_min = 500.0
+initial_velocity_max = 1000.0
+gravity = Vector3(0, 1800, 0)
+scale_min = 0.5
+scale_max = 0.5
+scale_over_velocity_min = 1000.0
+scale_over_velocity_max = 1000.0
+alpha_curve = SubResource("CurveTexture_rvswv")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7sc4i"]
+lifetime_randomness = 0.8
+particle_flag_align_y = true
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(800, 1, 1)
+direction = Vector3(-1, 1, 0)
+spread = 2.0
+initial_velocity_min = 500.0
+initial_velocity_max = 1000.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_max = 0.5
+scale_over_velocity_min = 1000.0
+scale_over_velocity_max = 1000.0
+alpha_curve = SubResource("CurveTexture_rvswv")
 
 [sub_resource type="LabelSettings" id="LabelSettings_mfdv2"]
 font_size = 48
@@ -75,15 +128,29 @@ region_rect = Rect2(0, 0, 1024, 1024)
 [node name="Boss" parent="." instance=ExtResource("5_vef74")]
 unique_name_in_owner = true
 position = Vector2(911, 483.00003)
-offset = Vector2(0, -404.5)
-flip_h = true
+texture = ExtResource("6_iotsf")
+offset = Vector2(0, -450)
+
+[node name="Area2D" type="Area2D" parent="Boss"]
+position = Vector2(0, -450)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boss/Area2D"]
+position = Vector2(29.999996, 54.999844)
+shape = SubResource("CapsuleShape2D_215e1")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Boss/Area2D"]
+position = Vector2(-99.99999, -410.00012)
+shape = SubResource("CircleShape2D_7sc4i")
 
 [node name="Factory" parent="." instance=ExtResource("9_vef74")]
 position = Vector2(210, 2655)
 
-[node name="Player" type="Sprite2D" parent="."]
+[node name="Player" type="Node2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(171, 479)
+
+[node name="PlayerSprite" type="Sprite2D" parent="Player"]
+unique_name_in_owner = true
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("6_mfdv2")
 offset = Vector2(0, -401.5)
@@ -91,26 +158,34 @@ offset = Vector2(0, -401.5)
 [node name="Area2D" type="Area2D" parent="Player"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Area2D"]
-position = Vector2(209.99997, -579.99994)
+position = Vector2(21, -58)
 shape = SubResource("CircleShape2D_mfdv2")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Player/Area2D"]
-position = Vector2(-50, -229.99997)
+position = Vector2(-5, -23)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_iotsf")
 
 [node name="Sidekicks" type="Node2D" parent="."]
 unique_name_in_owner = true
 
-[node name="Vamipire1" type="Sprite2D" parent="Sidekicks"]
+[node name="Vamipire1" type="Node2D" parent="Sidekicks"]
+unique_name_in_owner = true
 position = Vector2(76.549995, 486.69998)
+
+[node name="Vamipire2" type="Sprite2D" parent="Sidekicks/Vamipire1"]
+unique_name_in_owner = true
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("7_iotsf")
 offset = Vector2(0, -417.5)
 flip_h = true
 
-[node name="Vampire2" type="Sprite2D" parent="Sidekicks"]
+[node name="Vampire2" type="Node2D" parent="Sidekicks"]
+unique_name_in_owner = true
 position = Vector2(76.549995, 486.69998)
+
+[node name="Vampire3" type="Sprite2D" parent="Sidekicks/Vampire2"]
+unique_name_in_owner = true
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("8_lc2xo")
 offset = Vector2(0, -438.5)
@@ -119,14 +194,46 @@ flip_h = true
 [node name="Obstacles" type="Node2D" parent="."]
 unique_name_in_owner = true
 
+[node name="Clover2" type="Sprite2D" parent="Obstacles"]
+position = Vector2(222, 404)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("11_215e1")
+offset = Vector2(0, -150)
+script = ExtResource("12_7sc4i")
+points_value = 0
+
+[node name="Area2D" type="Area2D" parent="Obstacles/Clover2"]
+position = Vector2(0, -150)
+collision_mask = 0
+
+[node name="CollisionShapeD2" type="CollisionShape2D" parent="Obstacles/Clover2/Area2D"]
+shape = SubResource("CircleShape2D_80cx4")
+
 [node name="Rain" parent="." node_paths=PackedStringArray("player", "boss", "obstacles") instance=ExtResource("10_hve3p")]
-player = NodePath("../Player")
+unique_name_in_owner = true
+player = NodePath("")
 boss = NodePath("../Boss")
 obstacles = NodePath("../Obstacles")
 
-[node name="RainTimer" type="Timer" parent="Rain"]
+[node name="Particles2D" type="GPUParticles2D" parent="Rain"]
 unique_name_in_owner = true
-wait_time = 0.1
+emitting = false
+amount = 5000
+texture = ExtResource("14_7sc4i")
+lifetime = 0.5
+fixed_fps = 60
+visibility_rect = Rect2(0, 0, 1000, 600)
+process_material = SubResource("ParticleProcessMaterial_80cx4")
+
+[node name="Particles2D2" type="GPUParticles2D" parent="Rain"]
+unique_name_in_owner = true
+position = Vector2(794, -24)
+amount = 1000
+texture = ExtResource("14_7sc4i")
+lifetime = 2.0
+fixed_fps = 60
+visibility_rect = Rect2(0, 0, 1000, 600)
+process_material = SubResource("ParticleProcessMaterial_7sc4i")
 
 [node name="SpawnTimer" type="Timer" parent="."]
 unique_name_in_owner = true
@@ -236,7 +343,6 @@ theme_override_font_sizes/font_size = 32
 text = "RESTART"
 
 [connection signal="area_entered" from="Player/Area2D" to="." method="_on_player_collider_area_entered"]
-[connection signal="timeout" from="Rain/RainTimer" to="Rain" method="_on_rain_timer_timeout"]
 [connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]
 [connection signal="timeout" from="PickupTimer" to="." method="_on_pickup_timer_timeout"]
 [connection signal="pressed" from="UILayer/Overlay/Button" to="." method="_on_restart_pressed"]
