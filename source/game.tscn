@@ -209,9 +209,8 @@ collision_mask = 0
 [node name="CollisionShapeD2" type="CollisionShape2D" parent="Obstacles/Clover2/Area2D"]
 shape = SubResource("CircleShape2D_80cx4")
 
-[node name="Rain" parent="." node_paths=PackedStringArray("player", "boss", "obstacles") instance=ExtResource("10_hve3p")]
+[node name="Rain" parent="." node_paths=PackedStringArray("boss", "obstacles") instance=ExtResource("10_hve3p")]
 unique_name_in_owner = true
-player = NodePath("")
 boss = NodePath("../Boss")
 obstacles = NodePath("../Obstacles")
 

@@ -163,7 +163,7 @@ func _process(delta: float) -> void:
 				sk.is_jumping = false
 				sk.jump_vel = 0.0
 		else:
-			spr.get_child(0).position.y = -abs(sin(Globals.game_speed*200.0+sk.x_offset)) * 5.0
+			spr.get_child(0).position.y = -abs(sin(Globals.game_speed * 200.0 + (i+1) * 1.75)) * 5.0
 		# Process action queue with delay
 		for a in action_queue:
 			if not a.has("processed_by"):
@@ -199,7 +199,7 @@ func _process(delta: float) -> void:
 
 	# Move and cleanup obstacles; check collisions
 	for obstacle in obstacle_container.get_children():
-		obstacle.position.x -= Globals.game_speed
+		obstacle.position.x -= Globals.game_speed * 200.0 * delta
 		if (obstacle.global_position.x + 64.0) < 0.0:
 			obstacle.queue_free()
 			continue
@@ -242,13 +242,14 @@ func _on_game_over() -> void:
 	spawn_timer.stop()
 	pickup_timer.stop()
 	player_ducking = false
+	parallax_1.autoscroll.x = 0.0
+	parallax_2.autoscroll.x = 0.0
+	parallax_3.autoscroll.x = 0.0
 	# simple feedback: tint player red
 	player.modulate = Color(1,0.4,0.4)
 	# show overlay
 	overlay.visible = true
-	var final := overlay.get_node("FinalScore") as Label
-	if final:
-		final.text = "FINAL SCORE: %d" % int(score)
+	%FinalScoreLabel.text = "FINAL SCORE: %d" % int(score)
 
 func _on_restart_pressed() -> void:
 	# Reload current scene
